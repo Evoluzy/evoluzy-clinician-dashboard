@@ -13,30 +13,8 @@
   text-align: center;
 }
 
-.health-dashboard div {
+.health-dashboard > * {
   margin: 15px auto;
-}
-
-/* Table CSS */
-table {
-  margin: auto;
-}
-td, th {
-  border: 1px solid #ddd;
-  padding: 10px 1rem;
-}
-tr:nth-child(even){
-  background-color: #f2f2f2;
-}
-tr:hover {
-  background-color: #ddd;
-}
-th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: center;
-  background-color: #4CAF50;
-  color: white;
 }
 
 .chart-title {
