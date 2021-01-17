@@ -18,7 +18,6 @@ class BarChart extends React.Component {
         subCaption: this.props.subTitle,
         xAxisName: this.props.xaxis,
         yAxisName: this.props.yaxis,
-        numberSuffix: 'K',
         theme: 'fusion'
       },
       data: this.props.data
@@ -28,7 +27,7 @@ class BarChart extends React.Component {
       type: 'column2d',
       width: 600,
       height: 400,
-      dataFormat: 'json',
+      dataFormat: 'JSON',
       dataSource: this.dataSource
     };
   }
