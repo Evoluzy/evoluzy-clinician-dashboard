@@ -10,10 +10,6 @@ const PatientHealthDashboard = () => {
   const { patientId } = useParams();
 
   const [isFetching, setIsFetching] = useState(false);
-  const [healthRecords, setHealthRecords] = useState([
-    {id: 1, date: "2020-09-01", summary: "Flu"},
-    {id: 2, date: "2020-11-01", summary: "Headache"}
-  ]);
 
   const tableTitle = "Patient Sympton";
   const [tableRecords , setTableRecords] = useState([
