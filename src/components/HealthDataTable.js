@@ -10,9 +10,9 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 
 export default function StickyHeadTable(props) {
-  const title = props.title
-  const columns = ["DateTime", "Symptons"]
-  const rows = props.records
+  const title = props.title;
+  const columns = ["Date", "Sleep Duration(hours)", "Sleep Period", "Hearts Points", "Calories Burned (cal)", "Step Count"];
+  const rows = props.records;
 
   const StyledTableCell = withStyles((theme) => ({
     head: {
@@ -58,11 +58,23 @@ export default function StickyHeadTable(props) {
             {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
               return (
                 <TableRow hover role="checkbox" tabIndex={-1} key={"record-"+row.id}>
-                  <TableCell>
-                    {row.datetime}
+                  <TableCell align="center">
+                    {row.date}
                   </TableCell>
-                  <TableCell>
-                    {row.sympton}
+                  <TableCell align="center">
+                    {row.hours}
+                  </TableCell>
+                  <TableCell align="center">
+                    {row.sleepPeriod}
+                  </TableCell>
+                  <TableCell align="center">
+                    {row.points}
+                  </TableCell>
+                  <TableCell align="center">
+                    {row.calories}
+                  </TableCell>
+                  <TableCell align="center">
+                    {row.count}
                   </TableCell>
                 </TableRow>
               );
