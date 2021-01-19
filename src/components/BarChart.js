@@ -18,14 +18,16 @@ class BarChart extends React.Component {
         subCaption: this.props.subTitle,
         xAxisName: this.props.xaxis,
         yAxisName: this.props.yaxis,
-        theme: 'fusion'
+        theme: 'fusion',
+        palettecolors: this.props.colorPalette ? this.props.colorPalette : "5d62b5",
+        plotToolText: this.props.tooltipText ? this.props.tooltipText : "$label<br>$value"
       },
       data: this.props.data
     };
     
     this.chartConfigs = {
       type: 'column2d',
-      width: 600,
+      width: "100%",
       height: 400,
       dataFormat: 'JSON',
       dataSource: this.dataSource
