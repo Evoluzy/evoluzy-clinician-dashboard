@@ -39,6 +39,19 @@ export const formatCaloriesBurnedData =  (rawCaloriesBurnObj) => {
   return barChartData;
 }
 
+export const formatDailyStepCountData = (rawDailyStepCountObj) => {
+  let barChartData = rawDailyStepCountObj.map(data => {
+    return {
+      label: data.date,
+      value: data.count
+    }
+  })
+  if (barChartData.length > 14) {
+    return barChartData.slice(0, 14);
+  }
+  return barChartData;
+}
+
 export const formatWeeklyStepCountData = (rawWeeklyStepCountObj) => {
   let barChartData = rawWeeklyStepCountObj.map(data => {
     return {

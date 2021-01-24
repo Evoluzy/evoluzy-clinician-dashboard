@@ -8,10 +8,11 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import BarChart from '../components/BarChart';
 import HealthDataTable from '../components/HealthDataTable';
 
-import {formatCaloriesBurnedData, formatHeartMinutesData, formatSleepData, formatWeeklyStepCountData, formatOverviewData} from "../utils/DashboardUtils";
+import {formatCaloriesBurnedData, formatHeartMinutesData, formatSleepData, formatDailyStepCountData, formatOverviewData, formatWeeklyStepCountData} from "../utils/DashboardUtils";
 
 const PatientHealthDashboard = () => {
   const { patientId } = useParams();
+  const SERVER_URL = "";
 
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState("");
@@ -28,6 +29,17 @@ const PatientHealthDashboard = () => {
   useEffect(() => {
     if (healthDataDetails.length === 0) {
       setIsFetching(true);
+      const options = {
+        method: "GET",
+        mode: 'cors',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          patientId: patientId
+        })
+      }
+      // fetch("viewAnalytics", options)
       fetch("../static.dummy.json")
         .then(res => {
           console.log("RES", res)
@@ -44,6 +56,7 @@ const PatientHealthDashboard = () => {
             setSleepTimeData(formatSleepData(data.sleep));
             setCaloriesBurnedData(formatCaloriesBurnedData(data.caloriesBurned));
             setHeartMinutesData(formatHeartMinutesData(data.heartMinutes));
+            // setStepCount(formatDailyStepCountData(data.step.daily));
             setStepCount(formatWeeklyStepCountData(data.step.weeklyAverage));
             setHealthDataDetails(formatOverviewData(
               data.sleep, data.heartMinutes, data.caloriesBurned, data.step.daily
@@ -65,10 +78,10 @@ const PatientHealthDashboard = () => {
     { label: '20/12-26/12', value: '1240' },
     { label: '13/12-19/12', value: '616' }
   ]);
-  const stepCountTitle = "Weekly Average Steps Count";
-  const stepCountSubTitle = "Last 5 weeks";
+  const stepCountTitle = "Daily Steps Count";
+  const stepCountSubTitle = "Last 14 Days";
   const stepCountXaxis = "Period";
-  const stepCountYaxis = "Average Steps Count";
+  const stepCountYaxis = "Steps Count";
   const stepCountColorPalette = "29C3BE";
   const stepCountTooltipText = "Period: $label<br>$value steps";
 
@@ -255,6 +268,9 @@ const PatientHealthDashboard = () => {
       : 
       <div>
         <h3>Error! Not Health Data</h3>
+        {Boolean(error) && (
+          <p>{error}</p>
+        )}
         <button className="btn btn-danger" onClick={() => window.history.go(-1)}>Back</button>
       </div>
       } 
