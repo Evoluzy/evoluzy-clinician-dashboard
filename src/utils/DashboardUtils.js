@@ -17,7 +17,7 @@ export const formatHeartMinutesData =  (rawHeartMinObj) => {
   let barChartData = rawHeartMinObj.map(data => {
     return {
       label: data.date,
-      value: data.points
+      value: data.count
     }
   })
   if (barChartData.length > 14) {
@@ -30,7 +30,7 @@ export const formatCaloriesBurnedData =  (rawCaloriesBurnObj) => {
   let barChartData = rawCaloriesBurnObj.map(data => {
     return {
       label: data.date,
-      value: data.points
+      value: data.calories
     }
   })
   if (barChartData.length > 14) {
