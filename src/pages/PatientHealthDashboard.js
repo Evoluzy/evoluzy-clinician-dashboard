@@ -6,58 +6,68 @@ import Paper from '@material-ui/core/Paper';
 import Grow from '@material-ui/core/Grow';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import BarChart from '../components/BarChart';
+import LineChart from '../components/LineChart';
 import HealthDataTable from '../components/HealthDataTable';
 
 import {formatCaloriesBurnedData, formatHeartMinutesData, formatSleepData, formatDailyStepCountData, formatOverviewData, formatWeeklyStepCountData} from "../utils/DashboardUtils";
 
 const PatientHealthDashboard = () => {
   const { patientId } = useParams();
-  const SERVER_URL = "";
+  const SERVER_URL = "https://evoluzy.et.r.appspot.com";
+
+  const [firstMount, setFirstMounted] = useState(true);
 
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState("");
 
-  const [patientName, setPatientName] = useState("Howard Yaw");
+  const [patientName, setPatientName] = useState("");
   
   const healthDataTitle = "Health Data Details";
-  const [healthDataDetails, setHealthDataDetails] = useState([
-    {date: "18/01", hours: "7.3", sleepPeriod: "23:00:00 - 06:30:00", points: "20", calories: "283.2", count: "234"},
-    {date: "17/01", hours: "7.3", sleepPeriod: "23:00:00 - 06:30:00", points: "20", calories: "283.2", count: "234"},
-    {date: "16/01", hours: "7.3", sleepPeriod: "23:00:00 - 06:30:00", points: "20", calories: "283.2", count: "234"}
-  ])
+  const [healthDataDetails, setHealthDataDetails] = useState([]);
 
-  useEffect(() => {
+  // [
+  //   {date: "18/01", hours: "7.5", sleepPeriod: "23:00:00 - 06:30:00", points: "0", calories: "126.4", count: "116"},
+  //   {date: "17/01", hours: "9", sleepPeriod: "23:30:00 - 08:30:00", points: "0", calories: "126", count: "290"},
+  //   {date: "16/01", hours: "0", sleepPeriod: "", points: "26", calories: "283.2", count: "260"},
+  //   {date: "15/01", hours: "8.5", sleepPeriod: "23:00:00 - 07:30:00", points: "26.5", calories: "0", count: "240"},
+  //   {date: "14/01", hours: "8", sleepPeriod: "00:00:00 - 08:00:00", points: "26", calories: "126", count: "346"},
+  //   {date: "13/01", hours: "6", sleepPeriod: "00:10:00 - 06:10:00", points: "26", calories: "0", count: "96"},
+  //   {date: "12/01", hours: "0", sleepPeriod: "", points: "26", calories: "0", count: "156"},
+  //   {date: "11/01", hours: "7.5", sleepPeriod: "00:30:00 - 08:00:00", points: "26.4", calories: "126.4", count: "482"},
+  //   {date: "10/01", hours: "7.5", sleepPeriod: "23:00:00 - 06:30:00", points: "0", calories: "126.4", count: "116"},
+  //   {date: "09/01", hours: "9", sleepPeriod: "23:30:00 - 08:30:00", points: "0", calories: "126", count: "290"},
+  //   {date: "08/01", hours: "0", sleepPeriod: "", points: "26", calories: "283.2", count: "260"},
+  //   {date: "07/01", hours: "8.5", sleepPeriod: "23:00:00 - 07:30:00", points: "26.5", calories: "0", count: "240"},
+  //   {date: "06/01", hours: "8", sleepPeriod: "00:00:00 - 08:00:00", points: "26", calories: "126", count: "616"},
+  //   {date: "05/01", hours: "6", sleepPeriod: "00:10:00 - 06:10:00", points: "26", calories: "0", count: "527"},
+  //   {date: "04/01", hours: "0", sleepPeriod: "", points: "26", calories: "152", count: "378"},
+  //   {date: "03/01", hours: "7.5", sleepPeriod: "00:30:00 - 08:00:00", points: "34", calories: "134", count: "376"}
+  // ]
+
+useEffect(() => {
     if (healthDataDetails.length === 0) {
       setIsFetching(true);
       const options = {
         method: "GET",
-        mode: 'cors',
         headers: {
           "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          patientId: patientId
-        })
+        }
       }
-      // fetch("viewAnalytics", options)
-      fetch("../static.dummy.json")
-        .then(res => {
-          console.log("RES", res)
-          // if (res.status === 200) {
-            return res.json()
-          // } else {
-          //   return false
-          // }
-        })
+      fetch(`${SERVER_URL}/viewAnalytics?patientId=${patientId}`, options)
+        .then(res => res.json())
         .then(data => {
-          console.log("DATA", data)
+          // console.log("DATA", data)
           if (data) {
             setPatientName(data.patientName);
             setSleepTimeData(formatSleepData(data.sleep));
+            console.log(formatSleepData(data.sleep));
             setCaloriesBurnedData(formatCaloriesBurnedData(data.caloriesBurned));
+            console.log(formatCaloriesBurnedData(data.caloriesBurned));
             setHeartMinutesData(formatHeartMinutesData(data.heartMinutes));
+            console.log(formatHeartMinutesData(data.heartMinutes));
             // setStepCount(formatDailyStepCountData(data.step.daily));
-            setStepCount(formatWeeklyStepCountData(data.step.weeklyAverage));
+            setStepCount(formatDailyStepCountData(data.step.daily));
+            console.log(formatDailyStepCountData(data.step.daily));
             setHealthDataDetails(formatOverviewData(
               data.sleep, data.heartMinutes, data.caloriesBurned, data.step.daily
             ));
@@ -67,34 +77,20 @@ const PatientHealthDashboard = () => {
         })
         .finally(() => {
           setIsFetching(false);
+          setFirstMounted(false);
         })
     }
-  })
+  }, [patientId, healthDataDetails])
 
-  const [stepCountData, setStepCount] = useState([
-    { label: '10/01-17/01', value: '116' },
-    { label: '3/01-9/01', value: '290' },
-    { label: '27/12-2/01', value: '260' },
-    { label: '20/12-26/12', value: '1240' },
-    { label: '13/12-19/12', value: '616' }
-  ]);
+  const [stepCountData, setStepCount] = useState([]);
   const stepCountTitle = "Daily Steps Count";
   const stepCountSubTitle = "Last 14 Days";
-  const stepCountXaxis = "Period";
+  const stepCountXaxis = "Date";
   const stepCountYaxis = "Steps Count";
-  const stepCountColorPalette = "29C3BE";
-  const stepCountTooltipText = "Period: $label<br>$value steps";
+  const stepCountColorPalette = "5d62b5";
+  const stepCountTooltipText = "Date: $label<br>$value steps";
 
-  const [heartMinutesData, setHeartMinutesData] = useState([
-    {label: "18/01", value: 0},
-    {label: "17/01", value: 0},
-    {label: "16/01", value: 26},
-    {label: "15/01", value: 26.5},
-    {label: "14/01", value: 26},
-    {label: "13/01", value: 26},
-    {label: "12/01", value: 26},
-    {label: "11/01", value: 26.4}
-  ]);
+  const [heartMinutesData, setHeartMinutesData] = useState([]);
   const heartMinutesTitle = "Daily Heart Minutes";
   const heartMinutesSubTitle = "Last 14 days";
   const heartMinutesXaxis = "Date";
@@ -102,16 +98,7 @@ const PatientHealthDashboard = () => {
   const heartMinutesColorPalette = "00B0D4";
   const heartMinutesTooltipText = "Date: $label<br>Heart Points: $value";
 
-  const [caloriesBurnedData, setCaloriesBurnedData] = useState([
-    {label: "18/01", value: 26.4},
-    {label: "17/01", value: 26},
-    {label: "16/01", value: 0},
-    {label: "15/01", value: 0},
-    {label: "14/01", value: 26},
-    {label: "13/01", value: 0},
-    {label: "12/01", value: 0},
-    {label: "11/01", value: 26.4}
-  ]);
+  const [caloriesBurnedData, setCaloriesBurnedData] = useState([]);
   const caloriesBurnedTitle = "Daily Calories Burned";
   const caloriesBurnedSubTitle = "Last 14 days";
   const caloriesBurnedXaxis = "Date";
@@ -119,20 +106,12 @@ const PatientHealthDashboard = () => {
   const caloriesBurnedColorPalette = "0097DC";
   const caloriesBurnedTooltipText = "Date: $label<br>$value calories burned";
 
-  const [sleepTimeData, setSleepTimeData] = useState([
-    {label: "18/01", value: 7.5, start: "23:00:00", end: "06:30:00"},
-    {label: "17/01", value: 9, start: "23:30:00", end: "08:30:00"},
-    {label: "16/01", value: 0, start: "", end: ""},
-    {label: "15/01", value: 8.5, start: "23:00:00", end: "07:30:00"},
-    {label: "14/01", value: 8, start: "00:00:00", end: "08:00:00"},
-    {label: "13/01", value: 6, start: "00:10:00", end: "06:10:00"},
-    {label: "12/01", value: 0, start: "", end: ""},
-    {label: "11/01", value: 7.5, start: "00:30:00", end: "08:00:00"}
-  ]);
+  const [sleepTimeData, setSleepTimeData] = useState([]);
   const sleepTimeTitle = "Daily Sleep Duration";
   const sleepTimeSubTitle = "Last 14 days";
   const sleepTimeXaxis = "Date";
   const sleepTimeYaxis = "Total Sleep Duration (Hours)";
+  const sleepTimeColorPalette = "29C3BE";
   const sleepTimeTooltipText = "Date: $label<br>Slept $value hours";
 
   const handleChange = () => {
@@ -140,62 +119,9 @@ const PatientHealthDashboard = () => {
   };
   const [checked, setChecked] = useState(false);
 
-  const dummyRes = {
-    patientName: "Howard",
-    sleep: [
-      {date: "18/01", "hours": 7.5, start: "23:00:00", end: "06:30:00"},
-      {date: "17/01", "hours": 9, start: "23:30:00", end: "08:30:00"},
-      {date: "16/01", "hours": 0, start: "", end: ""},
-      {date: "15/01", "hours": 8.5, start: "23:00:00", end: "07:30:00"},
-      {date: "14/01", "hours": 8, start: "00:00:00", end: "08:00:00"},
-      {date: "13/01", "hours": 6, start: "00:10:00", end: "06:10:00"},
-      {date: "12/01", "hours": 0, start: "", end: ""},
-      {date: "11/01", "hours": 7.5, start: "00:30:00", end: "08:00:00"}
-    ],
-    heartMinutes: [
-      {date: "18/01", "points": 0},
-      {date: "17/01", "points": 0},
-      {date: "16/01", "points": 26},
-      {date: "15/01", "points": 26.5},
-      {date: "14/01", "points": 26},
-      {date: "13/01", "points": 26},
-      {date: "12/01", "points": 26},
-      {date: "11/01", "points": 26.4}
-    ],
-    caloriesBurned: [
-      {date: "18/01", "calories": 26.4},
-      {date: "17/01", "calories": 26},
-      {date: "16/01", "calories": 0},
-      {date: "15/01", "calories": 0},
-      {date: "14/01", "calories": 26},
-      {date: "13/01", "calories": 0},
-      {date: "12/01", "calories": 0},
-      {date: "11/01", "calories": 26.4}
-    ],
-    step: {
-      weeklyAverage: [
-        {label: "10/01-16/01", average: "80"},
-        {label: "03/01-09/01", average: "96"},
-        {label: "27/12-02/01", average: "124"},
-        {label: "20/12-26/12", average: "100"},
-        {label: "13/12-19/12", average: "95"}
-      ],
-      daily: [
-        {date: "18/01", count: "123"},
-        {date: "17/01", count: "123"},
-        {date: "16/01", count: "0"},
-        {date: "15/01", count: "123"},
-        {date: "14/01", count: "72"},
-        {date: "13/01", count: "215"},
-        {date: "12/01", count: "123"},
-        {date: "11/01", count: "217"}
-      ]
-    },
-  }
-
   return (
     <div className="app-page">
-      {patientId && !isNaN(Number.parseInt(patientId)) ? 
+      {patientId ? 
       <div>
         {Boolean(patientName) &&(
         <div className="patient-info">
@@ -209,7 +135,7 @@ const PatientHealthDashboard = () => {
           <div className="row charts">
             {stepCountData.length > 0 && (
             <div className="col-12 col-md-6">
-              <BarChart data={stepCountData.reverse()} 
+              <LineChart data={stepCountData.reverse()} 
                 title={stepCountTitle} subTitle={stepCountSubTitle}
                 xaxis={stepCountXaxis} yaxis={stepCountYaxis} 
                 colorPalette={stepCountColorPalette} tooltipText={stepCountTooltipText} />
@@ -220,7 +146,7 @@ const PatientHealthDashboard = () => {
               <BarChart data={sleepTimeData.reverse()} 
                   title={sleepTimeTitle} subTitle={sleepTimeSubTitle}
                   xaxis={sleepTimeXaxis} yaxis={sleepTimeYaxis} 
-                  tooltipText={sleepTimeTooltipText} />
+                  colorPalette={sleepTimeColorPalette} tooltipText={sleepTimeTooltipText} />
             </div>
             )}
             {heartMinutesData.length > 0 && (
