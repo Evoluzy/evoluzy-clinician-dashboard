@@ -9,15 +9,15 @@ import BarChart from '../components/BarChart';
 import LineChart from '../components/LineChart';
 import HealthDataTable from '../components/HealthDataTable';
 
-import {formatCaloriesBurnedData, formatHeartMinutesData, formatSleepData, formatDailyStepCountData, formatOverviewData, formatWeeklyStepCountData} from "../utils/DashboardUtils";
+import {formatCaloriesBurnedData, formatHeartMinutesData, formatSleepData, formatDailyStepCountData, formatOverviewData} from "../utils/DashboardUtils";
 
 const PatientHealthDashboard = () => {
   const { patientId } = useParams();
   const SERVER_URL = "https://evoluzy.et.r.appspot.com";
 
-  const [firstMount, setFirstMounted] = useState(true);
+  // const [firstMount, setFirstMounted] = useState(true);
 
-  const [isFetching, setIsFetching] = useState(false);
+  // const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState("");
 
   const [patientName, setPatientName] = useState("");
@@ -75,10 +75,10 @@ useEffect(() => {
             setError("No Health Data Found");
           }
         })
-        .finally(() => {
-          setIsFetching(false);
-          setFirstMounted(false);
-        })
+        // .finally(() => {
+        //   setIsFetching(false);
+        //   setFirstMounted(false);
+        // })
     }
   }, [patientId, healthDataDetails])
 
