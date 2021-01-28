@@ -46,7 +46,7 @@ const PatientHealthDashboard = () => {
 
 useEffect(() => {
     if (healthDataDetails.length === 0) {
-      setIsFetching(true);
+      // setIsFetching(true);
       const options = {
         method: "GET",
         headers: {
