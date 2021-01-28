@@ -7,10 +7,26 @@ on:
       - production-*
 
 jobs:
-  deploy_to_firebase_hosting:
-
+  build:
+    name: Build
     runs-on: ubuntu-latest
-    
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@master
+      - name: Install Dependencies
+        run: yarn
+      - name: Build
+        run: yarn
+      - name: Archive Production Artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: build
+          path: build
+     
+  deploy_to_firebase_hosting:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
         uses: actions/checkout@master
